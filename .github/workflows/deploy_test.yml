@@ -1,0 +1,31 @@
+name: Deploy to Test Environment
+
+on:
+  push:
+    branches:
+      - staging
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: latest
+      
+      - name: Terraform Init
+        working-directory: ./
+        run: terraform init
+      
+      - name: Terraform Plan
+        working-directory: ./
+        run: terraform plan -out=tfplan
+      
+      - name: Terraform Apply
+        working-directory: ./
+        run: terraform apply -auto-approve tfplan
